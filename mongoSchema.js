@@ -10,12 +10,16 @@ db.once('open', () => {
 
 const reviewSchema = new mongoose.Schema({
   productId: Number,
-  reviewId: Number,
+  reviewId: {
+    type: Number, unique: true, required: true, dropDups: true,
+  },
   reviewSummary: String,
   reviewBody: String,
   photos: [{ photoId: Number, photos: String }],
   helpfullness: Number,
-  reported: Boolean,
+  reported: {
+    type: Boolean, default: false,
+  },
   email: String,
   size: Number,
   fit: Number,
@@ -33,3 +37,5 @@ const ReviewAndRating = mongoose.model('Review', reviewSchema);
 // let save = (data) => {
 //   //save a repo to mongoDB database systemDesignCapstone
 // }
+
+// {Schema.Types.ObjectId, ref: ''}

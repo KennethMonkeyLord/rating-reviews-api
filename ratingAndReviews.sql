@@ -2,12 +2,12 @@ DROP DATABASE IF EXISTS ratingAndReviews;
 
 CREATE DATABASE ratingAndReviews;
 
-USE ratingAndReviews;
+-- USE ratingAndReviews;
 
-DROP TABLE IF EXISTS product;
+DROP TABLE IF EXISTS product, reviews, reviewPhotos, characteristics CASCADE;
 
 CREATE TABLE product (
-  id SERIAL PRIMARY KEY
+  product_id SERIAL PRIMARY KEY
 );
 
 -- ---
@@ -15,16 +15,14 @@ CREATE TABLE product (
 --
 -- ---
 
-DROP TABLE IF EXISTS reviews;
-
 CREATE TABLE reviews (
-  id SERIAL PRIMARY KEY,
+  review_id int PRIMARY KEY generated always as identity,
   rating INT,
   summary VARCHAR(60) DEFAULT NULL,
   name VARCHAR(30) DEFAULT NULL,
   date VARCHAR(20) DEFAULT NULL,
   helpfullness INTEGER NULL DEFAULT NULL,
-  productId INT references product(id),
+  productId INT references product(product_id),
   reported BOOLEAN DEFAULT false,
   body VARCHAR(1000) DEFAULT NULL,
   email VARCHAR(50) DEFAULT NULL
@@ -35,12 +33,10 @@ CREATE TABLE reviews (
 -- --
 -- -- ---
 
-DROP TABLE IF EXISTS reviewPhotos;
-
 CREATE TABLE reviewPhotos (
-  id SERIAL PRIMARY KEY,
+  photo_id int PRIMARY KEY generated always as identity,
   url VARCHAR(100) DEFAULT NULL,
-  review_id INT references reviews(id)
+  rev_id INT references reviews(review_id)
 );
 
 -- -- ---
@@ -48,17 +44,15 @@ CREATE TABLE reviewPhotos (
 -- --
 -- -- ---
 
-DROP TABLE IF EXISTS characteristics;
-
 CREATE TABLE characteristics (
-  id SERIAL PRIMARY KEY,
+  char_id int PRIMARY KEY generated always as identity,
   size INTEGER DEFAULT NULL,
   fit INTEGER DEFAULT NULL,
   length INTEGER DEFAULT NULL,
   quality INTEGER DEFAULT NULL,
   comfort INTEGER DEFAULT NULL,
-  reviewId INTEGER references reviews(id),
-  productId INTEGER references product(id)
+  reviewId INTEGER references reviews(review_id),
+  productId INTEGER references product(product_id)
 );
 
 -- -- ---
