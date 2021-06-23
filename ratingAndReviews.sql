@@ -7,53 +7,72 @@ CREATE DATABASE ratingAndReviews;
 DROP TABLE IF EXISTS product, reviews, reviewPhotos, characteristics CASCADE;
 
 CREATE TABLE product (
-  product_id SERIAL PRIMARY KEY
+  product_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  name VARCHAR(50)
+  --new, each product has some characteristics
 );
 
+CREATE TABLE characteristics (
+  char_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  name VARCHAR(50),
+  -- deleted --
+  -- reviewId INTEGER REFERENCES reviews(review_id),
+  productId INTEGER REFERENCES product(product_id)
+);
+
+CREATE TABLE product_characteristics (
+  p_id REFERENCES product(product_id),
+  c_id REFERENCES characteristics(char_id),
+  PRIMARY KEY(p_id, n_id),
+
+)
+
+CREATE TABLE values (
+  val_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  rating INT,
+  char_id INT REFERENCES characteristics(char_id),
+  review_id INT REFERENCES reviews(review_id)
+);
+
+1 5 size 25394
+2 4 length 251r3r3
+3 5 fit 25174324dj0
+4 4 size 20383
 -- ---
 -- Table 'reviews'
 --
 -- ---
 
 CREATE TABLE reviews (
-  review_id int PRIMARY KEY generated always as identity,
+  review_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   rating INT,
   summary VARCHAR(60) DEFAULT NULL,
   name VARCHAR(30) DEFAULT NULL,
   date VARCHAR(20) DEFAULT NULL,
   helpfullness INTEGER NULL DEFAULT NULL,
-  productId INT references product(product_id),
   reported BOOLEAN DEFAULT false,
   body VARCHAR(1000) DEFAULT NULL,
-  email VARCHAR(50) DEFAULT NULL
+  email VARCHAR(50) DEFAULT NULL,
+  productId INT REFERENCES product(product_id),
+  --new
 );
-
 -- -- ---
 -- -- Table 'reviewPhotos'
 -- --
 -- -- ---
 
 CREATE TABLE reviewPhotos (
-  photo_id int PRIMARY KEY generated always as identity,
+  photo_id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   url VARCHAR(100) DEFAULT NULL,
-  rev_id INT references reviews(review_id)
+  rev_id INT REFERENCES reviews(review_id)
 );
 
+-- fix reviewPhotos
 -- -- ---
 -- -- Table 'characteristics'
 -- --
 -- -- ---
 
-CREATE TABLE characteristics (
-  char_id int PRIMARY KEY generated always as identity,
-  size INTEGER DEFAULT NULL,
-  fit INTEGER DEFAULT NULL,
-  length INTEGER DEFAULT NULL,
-  quality INTEGER DEFAULT NULL,
-  comfort INTEGER DEFAULT NULL,
-  reviewId INTEGER references reviews(review_id),
-  productId INTEGER references product(product_id)
-);
 
 -- -- ---
 -- -- Foreign Keys

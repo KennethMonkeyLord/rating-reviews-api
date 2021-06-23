@@ -17,18 +17,27 @@ const reviewSchema = new mongoose.Schema({
   reviewBody: String,
   photos: [{ photoId: Number, photos: String }],
   helpfullness: Number,
+  recommended: {
+    type: Boolean, default: false,
+  },
   reported: {
     type: Boolean, default: false,
   },
   email: String,
-  size: Number,
-  fit: Number,
-  quality: Number,
-  comfort: Number,
-  length: Number,
+  characteristics: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Feature' }],
   date: Date,
   rating: Number,
 });
+
+const featureSchema = new mongoose.Schema({
+  productId: Number,
+  features: String,
+  value: Number,
+});
+
+//characteristics in each reviewSchema can be referenced via
+
+const Feature = mongoose.model('Feature', featureSchema);
 
 const ReviewAndRating = mongoose.model('Review', reviewSchema);
 
@@ -39,3 +48,5 @@ const ReviewAndRating = mongoose.model('Review', reviewSchema);
 // }
 
 // {Schema.Types.ObjectId, ref: ''}
+
+//handle manys and think about characteristics
