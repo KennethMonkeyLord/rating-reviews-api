@@ -33,11 +33,6 @@ CREATE TABLE values (
   char_id INT REFERENCES characteristics(char_id),
   review_id INT REFERENCES reviews(review_id)
 );
-
-1 5 size 25394
-2 4 length 251r3r3
-3 5 fit 25174324dj0
-4 4 size 20383
 -- ---
 -- Table 'reviews'
 --
