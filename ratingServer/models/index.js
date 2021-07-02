@@ -142,18 +142,19 @@ const markHelpful = (review_id) => {
 const addReview = (data) => {
   const { product_id, rating, summary, body, recommend, name, email, photos, characteristics } = data;
 
-  const charId = Object.keys(characteristics)
+  const charId = Object.keys(characteristics).map(Number);
   const charValue = Object.values(characteristics)
 
   const queryString = {
     name: 'add-review',
     text:
     `
-    INSERT INTO review(product_id, rating, date, summary, body, recommend, reviewer_name, reviewer_email, create_time_holder) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id INTO r_id;
-
-    INSERT INTO review_photo(review_id, url) SELECT r_id, UNNEST(ARRAY$10);
-
-    INSERT INTO review_characteristic(review_id, char_id, value) SELECT r_id, UNNEST(ARRAY$11), UNNEST(ARRAY$12);
+    WITH reviewIns AS (
+    INSERT INTO review(product_id, rating, date, summary, body, recommend, reviewer_name, reviewer_email, create_time_holder) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id
+    ), photoIns AS (
+    INSERT INTO review_photo(review_id, url) SELECT reviewIns.id, UNNEST(ARRAY($10)) FROM reviewIns
+    )
+    INSERT INTO review_characteristic(review_id, char_id, value) SELECT reviewIns.id, UNNEST(ARRAY$11), UNNEST(ARRAY$12) FROM reviewIns;
     `,
   }
 

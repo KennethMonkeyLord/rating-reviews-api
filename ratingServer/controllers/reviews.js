@@ -24,7 +24,9 @@ router.post('/', (req, res) => {
   const { body } = req
   db.addReview(body)
     .then((data) => res.status(200).send(data))
-    .catch((err) => res.status(500).send(err));
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send(err)});
 });
 
 router.put('/:review_id/helpful', (req, res) => {
