@@ -12,35 +12,20 @@ DROP TABLE IF EXISTS review, reviewAlpha, review_photo, characteristic, review_c
 --   chars INTEGER []
 -- );
 
-CREATE TABLE reviewAlpha (
-  id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  product_Id INT,
-  rating INT,
-  date VARCHAR(20) DEFAULT NULL,
-  summary VARCHAR(200),
-  body VARCHAR(1000) DEFAULT NULL,
-  recommend BOOLEAN DEFAULT false,
-  reported BOOLEAN DEFAULT false,
-  reviewer_name VARCHAR(60) DEFAULT NULL,
-  reviewer_email VARCHAR(60) DEFAULT NULL,
-  response VARCHAR(1000) DEFAULT NULL,
-  helpfulness INTEGER NULL DEFAULT NULL
-);
-
-
 CREATE TABLE review (
   id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   product_Id INT,
   rating INT,
-  date VARCHAR(20),
-  summary VARCHAR(60) CHECK (char_length(summary) <= 60),
+  date BIGINT,
+  summary VARCHAR(60),
   body VARCHAR(1000) DEFAULT NULL,
   recommend BOOLEAN DEFAULT false,
   reported BOOLEAN DEFAULT false,
   reviewer_name VARCHAR(60) DEFAULT NULL,
   reviewer_email VARCHAR(60) DEFAULT NULL,
   response VARCHAR(1000) DEFAULT NULL,
-  helpfulness INTEGER NULL DEFAULT NULL
+  helpfulness INTEGER DEFAULT 0,
+  create_time_holder TIMESTAMP without TIME ZONE
 );
 
 -- CONSTRAINT chkbodylength CHECK (char_length(body) >= 50)
@@ -57,12 +42,15 @@ CREATE TABLE review_characteristic (
   value INT CHECK (value BETWEEN 0 AND 5)
 );
 
- CREATE TABLE review_photo_temp (
-   id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-   review_id INT REFERENCES reviewAlpha(id),
-   url VARCHAR(2048)
- );
+CREATE TABLE review_photo(
+  id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  review_id INT REFERENCES review(id),
+  url VARCHAR(2048)
+);
 
+CREATE INDEX review_product_id ON review(product_id, rating, reported);
+
+CREATE INDEX photo_review_id ON review_photo(review_id);
 --  COPY review(id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness)
 --  FROM '/Users/stevenlam/hackreactor/serverDatabaseCapstone/ratingAndReviewsAPI/dataCSVs/reviews.csv'
 --  DELIMITER ','
