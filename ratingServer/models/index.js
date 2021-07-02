@@ -142,9 +142,14 @@ const markHelpful = (review_id) => {
 const addReview = (data) => {
   const { product_id, rating, summary, body, recommend, name, email, photos, characteristics } = data;
 
-  const charId = Object.keys(characteristics).map(Number);
-  const charValue = Object.values(characteristics)
-
+  const photo = JSON.stringify(photos);
+  console.log('photos', photo);
+  const charId = JSON.stringify(Object.keys(characteristics).map(Number));
+  const charValue = JSON.stringify(Object.values(characteristics));
+  console.log('charId', charId);
+  const date = +new Date();
+  const time = new Date;
+  const timeStamp = time.toISOString();
   const queryString = {
     name: 'add-review',
     text:
@@ -152,13 +157,13 @@ const addReview = (data) => {
     WITH reviewIns AS (
     INSERT INTO review(product_id, rating, date, summary, body, recommend, reviewer_name, reviewer_email, create_time_holder) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id
     ), photoIns AS (
-    INSERT INTO review_photo(review_id, url) SELECT reviewIns.id, UNNEST(ARRAY($10)) FROM reviewIns
+    INSERT INTO review_photo(review_id, url) SELECT reviewIns.id, json_array_elements_text('${photo}') FROM reviewIns
     )
-    INSERT INTO review_characteristic(review_id, char_id, value) SELECT reviewIns.id, UNNEST(ARRAY$11), UNNEST(ARRAY$12) FROM reviewIns;
+    INSERT INTO review_characteristic(review_id, char_id, value) SELECT reviewIns.id, json_array_elements_text('${charId}')::int, json_array_elements_text('${charValue}')::int FROM reviewIns;
     `,
   }
 
-  const values = [ product_id, rating, `SELECT TRUNC(EXTRACT(EPOCH FROM now()))`, summary, body, recommend, name, email, `SELECT to_timestamp(TRUNC(extract(EPOCH from now())))`, photos, charId, charValue ]
+  const values = [ product_id, rating, date, summary, body, recommend, name, email, timeStamp ]
 
   return (
     pool.query(queryString, values)
