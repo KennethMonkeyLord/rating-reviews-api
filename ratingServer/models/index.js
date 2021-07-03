@@ -62,7 +62,11 @@ const listReviews = (product_id, page = 1, count = 5, sort = 'newest') => {
   return (
     pool.query(queryString, values)
       .then((data) => {
-        reviewObject.results = data.rows[0].results
+        if (data.rows[0]) {
+          reviewObject.results = data.rows[0].results
+        } else {
+          reviewObject.results = [];
+        }
         return reviewObject
       })
   )
